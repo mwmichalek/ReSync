@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.idea
+/.vs
+/Mwm.ReSync/.vs/Mwm.ReSync
+/Mwm.ReSync/samples/clientpub/obj
+/Mwm.ReSync/samples/clientsub/obj
