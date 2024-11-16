@@ -23,6 +23,7 @@ namespace clientsub
 
             // Either generate the URL or fetch it from server or fetch a temp one from the portal
             var serviceClient = new WebPubSubServiceClient(connectionString, hub);
+            
             var url = serviceClient.GetClientAccessUri(userId: "user1", roles: new string[] {"webpubsub.joinLeaveGroup.demogroup", "webpubsub.sendToGroup.demogroup"});
 
             using (var client = new WebsocketClient(url, () =>
@@ -33,6 +34,9 @@ namespace clientsub
             }))
             {
                 // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
+                
+                
+                
                 client.ReconnectTimeout = null;
                 client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
                 await client.Start();
