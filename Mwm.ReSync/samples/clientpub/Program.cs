@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text.Json;
@@ -66,11 +67,14 @@ class Program
 
 public static class WebsocketClientExtensions
 {
-    public static void Subscribe<TMessage>(this WebsocketClient websocket, Action<TMessage> onMessage)
+    
+    private static IDictionary<string, Action<IMessage>> _handlers = new Dictionary<string, Action<IMessage>>();
+    public static void Subscribe<TMessage>(this WebsocketClient websocket, Action<TMessage> onMessage) where TMessage : IMessage
     {
+        _handlers[typeof(TMessage).Name] = onMessage;
         websocket.MessageReceived.Subscribe(msg => {
             var groupMessage = JsonSerializer.Deserialize<GroupMessage>(msg.Text);
-                
+            
         });
     }
 }
@@ -91,6 +95,11 @@ public class Message
     public string Body { get; set; }
     
     public DateTime TimeStamp { get; set; }
+    
+}
+
+public interface IMessage
+{
     
 }
 
