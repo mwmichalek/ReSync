@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clientpub", "samples\client
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "clientsub", "samples\clientsub\clientsub.csproj", "{6863758C-7197-4E17-97FA-AA0C2000BC21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Clients", "src\Mwm.ReSync.Clients\Mwm.ReSync.Clients.csproj", "{066354E9-B062-4FC0-86B5-89740408C2B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{6863758C-7197-4E17-97FA-AA0C2000BC21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6863758C-7197-4E17-97FA-AA0C2000BC21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6863758C-7197-4E17-97FA-AA0C2000BC21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{066354E9-B062-4FC0-86B5-89740408C2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{066354E9-B062-4FC0-86B5-89740408C2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{066354E9-B062-4FC0-86B5-89740408C2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{066354E9-B062-4FC0-86B5-89740408C2B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -8,55 +8,78 @@ using Azure.Messaging.WebPubSub;
 
 using Websocket.Client;
 
-namespace clientpub
+namespace clientpub;
+
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
+        if (args.Length != 2)
         {
-            if (args.Length != 2)
-            {
-                Console.WriteLine("Usage: clientpub <connectionString> <hub>");
-                return;
-            }
-            var connectionString = args[0];
-            var hub = args[1];
+            Console.WriteLine("Usage: clientpub <connectionString> <hub>");
+            return;
+        }
+        var connectionString = args[0];
+        var hub = args[1];
 
-            // Either generate the URL or fetch it from server or fetch a temp one from the portal
-            var serviceClient = new WebPubSubServiceClient(connectionString, hub);
-            var url = serviceClient.GetClientAccessUri(userId: "user1", roles: new string[] {"webpubsub.joinLeaveGroup.demogroup", "webpubsub.sendToGroup.demogroup"});
+        // Either generate the URL or fetch it from server or fetch a temp one from the portal
+        var serviceClient = new WebPubSubServiceClient(connectionString, hub);
+        var url = serviceClient.GetClientAccessUri(userId: "user1", roles: new string[] {"webpubsub.joinLeaveGroup.demogroup", "webpubsub.sendToGroup.demogroup"});
 
-            using (var client = new WebsocketClient(url, () =>
+        using (var client = new WebsocketClient(url, () =>
+        {
+            var inner = new ClientWebSocket();
+            inner.Options.AddSubProtocol("json.webpubsub.azure.v1");
+            return inner;
+        }))
+        {
+            // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
+            client.ReconnectTimeout = null;
+            client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
+            
+            //client.MessageReceived.
+            
+            
+            await client.Start();
+            Console.WriteLine("Connected.");
+            /* Send to group `demogroup` */
+            int ackId = 1;
+            var streaming = Console.ReadLine();
+            while (streaming != null)
             {
-                var inner = new ClientWebSocket();
-                inner.Options.AddSubProtocol("json.webpubsub.azure.v1");
-                return inner;
-            }))
-            {
-                // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
-                client.ReconnectTimeout = null;
-                client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
-                await client.Start();
-                Console.WriteLine("Connected.");
-                /* Send to group `demogroup` */
-                int ackId = 1;
-                var streaming = Console.ReadLine();
-                while (streaming != null)
+                client.Send(JsonSerializer.Serialize(new
                 {
-                    client.Send(JsonSerializer.Serialize(new
-                    {
-                        type = "sendToGroup",
-                        group = "demogroup",
-                        dataType = "text",
-                        data = streaming,
-                        ackId = ackId++
-                    }));
-                    streaming = Console.ReadLine();
-                }
-
-                Console.WriteLine("done");
-                /*  ------------  */
+                    type = "sendToGroup",
+                    group = "demogroup",
+                    dataType = "text",
+                    data = streaming,
+                    ackId = ackId++
+                }));
+                streaming = Console.ReadLine();
             }
+
+            Console.WriteLine("done");
+            /*  ------------  */
         }
     }
 }
+
+
+public class ExpiringMessage : Message
+{
+    public DateTime ExpirationTime { get; set; }
+}
+
+public class TranslatedMessage : Message
+{
+    public string TranslatedText { get; set; }
+}
+
+public class Message
+{
+    public string Body { get; set; }
+    
+    public DateTime TimeStamp { get; set; }
+    
+}
+
