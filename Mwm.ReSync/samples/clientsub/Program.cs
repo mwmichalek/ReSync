@@ -4,7 +4,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Azure.Messaging.WebPubSub;
-
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using Mwm.ReSync.Clients;
 using Websocket.Client;
 
 namespace clientsub;
@@ -34,11 +35,11 @@ class Program
         }))
         {
             // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
-            
-            
-            
+
             client.ReconnectTimeout = null;
-            client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
+            //client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
+            client.Subscribe((ExpiringMessage msg) => Console.WriteLine($"ExpiringMessage: {msg.Body} {msg.ExpirationTime} {msg.TimeStamp}"));
+            client.Subscribe((TranslatedMessage msg) => Console.WriteLine($"TranslatedMessage: {msg.Body} {msg.TranslatedText}  {msg.TimeStamp}"));
             
             await client.Start();
             Console.WriteLine("Connected.");

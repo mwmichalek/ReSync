@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Azure.Messaging.WebPubSub;
-
+using Mwm.ReSync.Clients;
 using Websocket.Client;
 
 namespace clientpub;
@@ -37,9 +37,7 @@ class Program
             // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
             client.ReconnectTimeout = null;
             
-            client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
-            //client.MessageReceived.s
-            //client.MessageReceived.
+            //client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
             
             await client.Start();
             Console.WriteLine("Connected.");
@@ -48,14 +46,17 @@ class Program
             var streaming = Console.ReadLine();
             while (streaming != null)
             {
-                client.Send(JsonSerializer.Serialize(new
-                {
-                    type = "sendToGroup",
-                    group = "demogroup",
-                    dataType = "text",
-                    data = streaming,
-                    ackId = ackId++
-                }));
+                client.Publish(new ExpiringMessage { Body = streaming , ExpirationTime = DateTime.Now.AddDays(7) , TimeStamp = DateTime.Now });
+                client.Publish(new TranslatedMessage { Body = streaming , TranslatedText = streaming.ToLower() , TimeStamp = DateTime.Now });
+                
+                // client.Send(JsonSerializer.Serialize(new
+                // {
+                //     type = "sendToGroup",
+                //     group = "demogroup",
+                //     dataType = "text",
+                //     data = streaming,
+                //     ackId = ackId++
+                // }));
                 streaming = Console.ReadLine();
             }
 
@@ -65,48 +66,4 @@ class Program
     }
 }
 
-public static class WebsocketClientExtensions
-{
-    
-    private static IDictionary<string, Action<IMessage>> _handlers = new Dictionary<string, Action<IMessage>>();
-    public static void Subscribe<TMessage>(this WebsocketClient websocket, Action<TMessage> onMessage) where TMessage : IMessage
-    {
-        _handlers[typeof(TMessage).Name] = onMessage;
-        websocket.MessageReceived.Subscribe(msg => {
-            var groupMessage = JsonSerializer.Deserialize<GroupMessage>(msg.Text);
-            
-        });
-    }
-}
-
-
-public class ExpiringMessage : Message
-{
-    public DateTime ExpirationTime { get; set; }
-}
-
-public class TranslatedMessage : Message
-{
-    public string TranslatedText { get; set; }
-}
-
-public class Message
-{
-    public string Body { get; set; }
-    
-    public DateTime TimeStamp { get; set; }
-    
-}
-
-public interface IMessage
-{
-    
-}
-
-public class GroupMessage
-{
-    public string GroupName { get; set; }
-    
-    public string JsonMessage { get; set; }
-}
 
