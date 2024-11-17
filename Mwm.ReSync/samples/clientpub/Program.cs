@@ -35,10 +35,10 @@ class Program
         {
             // Disable the auto disconnect and reconnect because the sample would like the client to stay online even no data comes in
             client.ReconnectTimeout = null;
+            
             client.MessageReceived.Subscribe(msg => Console.WriteLine($"Message received: {msg}"));
-            
+            //client.MessageReceived.s
             //client.MessageReceived.
-            
             
             await client.Start();
             Console.WriteLine("Connected.");
@@ -64,6 +64,17 @@ class Program
     }
 }
 
+public static class WebsocketClientExtensions
+{
+    public static void Subscribe<TMessage>(this WebsocketClient websocket, Action<TMessage> onMessage)
+    {
+        websocket.MessageReceived.Subscribe(msg => {
+            var groupMessage = JsonSerializer.Deserialize<GroupMessage>(msg.Text);
+                
+        });
+    }
+}
+
 
 public class ExpiringMessage : Message
 {
@@ -81,5 +92,12 @@ public class Message
     
     public DateTime TimeStamp { get; set; }
     
+}
+
+public class GroupMessage
+{
+    public string GroupName { get; set; }
+    
+    public string JsonMessage { get; set; }
 }
 
