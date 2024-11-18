@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Azure.Messaging.WebPubSub;
+using Azure.Messaging.WebPubSub.Clients;
 using Mwm.ReSync.Clients;
 using Websocket.Client;
 
@@ -25,7 +26,14 @@ class Program
 
         // Either generate the URL or fetch it from server or fetch a temp one from the portal
         var serviceClient = new WebPubSubServiceClient(connectionString, hub);
-        var url = serviceClient.GetClientAccessUri(userId: "user1", roles: new string[] {"webpubsub.joinLeaveGroup.demogroup", "webpubsub.sendToGroup.demogroup"});
+        
+        var url = serviceClient.GetClientAccessUri(
+            userId: "user1", 
+            roles: new string[]
+            {
+                "webpubsub.joinLeaveGroup.demogroup", 
+                "webpubsub.sendToGroup.demogroup"
+            });
 
         using (var client = new WebsocketClient(url, () =>
         {
@@ -48,6 +56,8 @@ class Program
             {
                 client.Publish(new ExpiringMessage { Body = streaming , ExpirationTime = DateTime.Now.AddDays(7) , TimeStamp = DateTime.Now });
                 client.Publish(new TranslatedMessage { Body = streaming , TranslatedText = streaming.ToLower() , TimeStamp = DateTime.Now });
+                //client.Se
+                
                 
                 // client.Send(JsonSerializer.Serialize(new
                 // {

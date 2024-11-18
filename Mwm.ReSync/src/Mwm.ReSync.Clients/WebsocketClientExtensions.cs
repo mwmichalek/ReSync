@@ -9,6 +9,7 @@ public static class WebsocketClientExtensions
     public static void Subscribe<TMessage>(this WebsocketClient websocket, Action<TMessage> onMessage) where TMessage : class
     {
         MessageSubscriptions[typeof(TMessage).Name] = new MessageSubscription<TMessage>(onMessage);
+        await websocket.JoinGroupAsync("testGroup");
         websocket.MessageReceived.Subscribe(msg => {
             try
             {
@@ -29,7 +30,7 @@ public static class WebsocketClientExtensions
             { MessageType = typeof(TMessage).Name, 
                 MessageJson = JsonSerializer.Serialize(message) };
         var typedMessageJson = JsonSerializer.Serialize(typedMessage);
-        websocket.Publish(typedMessageJson);
+        websocket.Send(typedMessageJson);
     }
 }
 
