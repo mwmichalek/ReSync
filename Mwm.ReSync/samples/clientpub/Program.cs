@@ -28,7 +28,7 @@ class Program
         var serviceClient = new WebPubSubServiceClient(connectionString, hub);
         
         var uri = serviceClient.GetClientAccessUri(
-            userId: "user1", 
+            userId: "publisher", 
             roles: new string[]
             {
                 "webpubsub.joinLeaveGroup.ExpiringMessage", 
@@ -45,10 +45,13 @@ class Program
         var streaming = Console.ReadLine();
         while (streaming != null)
         {
-            streaming = Console.ReadLine();
+            
             
             await client.PublishAsync(new ExpiringMessage { Body = streaming , ExpirationTime = DateTime.Now.AddDays(7) , TimeStamp = DateTime.Now });
             await client.PublishAsync(new TranslatedMessage { Body = streaming , TranslatedText = streaming.ToLower() , TimeStamp = DateTime.Now });
+            Console.WriteLine("Publisher: Published messages.");
+            
+            streaming = Console.ReadLine();
         }
         
         Console.WriteLine("Done.");

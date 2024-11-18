@@ -30,7 +30,7 @@ class Program
         //ExpiringMessage
         //TranslatedMessage
         var uri = serviceClient.GetClientAccessUri(
-            userId: "user1", 
+            userId: "subscriber", 
             roles: new string[]
             {
                 "webpubsub.joinLeaveGroup.ExpiringMessage", 

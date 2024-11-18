@@ -10,10 +10,9 @@ public static class WebPubSubClientExtensions
     
     public static async Task SubscribeAsync<TMessage>(this WebPubSubClient client, Action<TMessage> onMessage) where TMessage : class
     {
-        MessageSubscriptions[typeof(TMessage).Name] = new MessageSubscription<TMessage>(onMessage);
         await client.JoinGroupAsync(typeof(TMessage).Name);
+        
         // Only register the main function once
-
         if (MessageSubscriptions.Count == 0)
         {
             client.GroupMessageReceived += (messageArgs) =>
@@ -26,13 +25,15 @@ public static class WebPubSubClientExtensions
 
                 return Task.CompletedTask;
             };
+            
         }
+        
+        MessageSubscriptions[typeof(TMessage).Name] = new MessageSubscription<TMessage>(onMessage);
     }
 
     public static async Task PublishAsync<TMessage>(this WebPubSubClient client, TMessage message) where TMessage : class
     {
-        string jsonMessage = JsonSerializer.Serialize(message);
-        await client.SendToGroupAsync(typeof(TMessage).Name, BinaryData.FromString(jsonMessage), WebPubSubDataType.Json);
+        await client.SendToGroupAsync(typeof(TMessage).Name, BinaryData.FromObjectAsJson(message), WebPubSubDataType.Json);
     }
 }
 
