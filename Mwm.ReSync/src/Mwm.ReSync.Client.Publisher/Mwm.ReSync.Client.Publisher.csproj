@@ -14,7 +14,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Mwm.ReSync.Clients\Mwm.ReSync.Clients.csproj" />
+      <ProjectReference Include="..\Mwm.ReSync.Client.Common\Mwm.ReSync.Client.Common.csproj" />
+      <ProjectReference Include="..\Mwm.ReSync.Lib\Mwm.ReSync.Lib.csproj" />
     </ItemGroup>
 
 </Project>

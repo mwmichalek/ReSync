@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.WebPubSub;
 using Azure.Messaging.WebPubSub.Clients;
-using Mwm.ReSync.Clients;
+using Mwm.ReSync.Client.Common;
+using Mwm.ReSync.Lib;
 
 namespace Mwm.ReSync.Client.Publisher;
 

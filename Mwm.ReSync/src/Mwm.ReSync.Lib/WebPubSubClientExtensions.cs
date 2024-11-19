@@ -2,7 +2,7 @@ using System.Text.Json;
 using Azure.Messaging.WebPubSub.Clients;
 using Websocket.Client;
 
-namespace Mwm.ReSync.Clients;
+namespace Mwm.ReSync.Lib;
 
 public static class WebPubSubClientExtensions
 {
@@ -56,34 +56,3 @@ public class MessageSubscription<TMessage> : IMessageSubscription where TMessage
         return Task.CompletedTask;
     }
 }
-
-public class ExpiringMessage : Message
-{
-    public DateTime ExpirationTime { get; set; }
-}
-
-public class TranslatedMessage : Message
-{
-    public string TranslatedText { get; set; }
-}
-
-public class Message
-{
-    public string Body { get; set; }
-    
-    public DateTime TimeStamp { get; set; }
-    
-}
-
-public interface IMessage
-{
-    
-}
-
-public class TypedMessage
-{
-    public string MessageType { get; set; }
-    
-    public string MessageJson { get; set; }
-}
-    

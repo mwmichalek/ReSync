@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35004.147
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Clients", "src\Mwm.ReSync.Clients\Mwm.ReSync.Clients.csproj", "{066354E9-B062-4FC0-86B5-89740408C2B3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Lib", "src\Mwm.ReSync.Lib\Mwm.ReSync.Lib.csproj", "{066354E9-B062-4FC0-86B5-89740408C2B3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Consoles", "Consoles", "{6ED81BAA-C80F-4A52-98D7-8744A32D55E2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Client.Subscriber", "src\Mwm.ReSync.Client.Subscriber\Mwm.ReSync.Client.Subscriber.csproj", "{1E79B1E6-C302-43C2-AA8A-9B5F14B899CA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Client.Publisher", "src\Mwm.ReSync.Client.Publisher\Mwm.ReSync.Client.Publisher.csproj", "{FD5A8A06-BE34-4746-AF40-8A1094A8CB08}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mwm.ReSync.Client.Common", "src\Mwm.ReSync.Client.Common\Mwm.ReSync.Client.Common.csproj", "{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{FD5A8A06-BE34-4746-AF40-8A1094A8CB08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD5A8A06-BE34-4746-AF40-8A1094A8CB08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD5A8A06-BE34-4746-AF40-8A1094A8CB08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{1E79B1E6-C302-43C2-AA8A-9B5F14B899CA} = {6ED81BAA-C80F-4A52-98D7-8744A32D55E2}
 		{FD5A8A06-BE34-4746-AF40-8A1094A8CB08} = {6ED81BAA-C80F-4A52-98D7-8744A32D55E2}
+		{0B280C5A-A4A4-46A1-A23C-C9FC1D0387B7} = {6ED81BAA-C80F-4A52-98D7-8744A32D55E2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {93115F80-D29C-41C2-BCE1-06D6C3075A17}

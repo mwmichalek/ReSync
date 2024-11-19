@@ -1,4 +1,6 @@
 ﻿
+using Mwm.ReSync.Client.Common;
+
 namespace Mwm.ReSync.Client.Subscriber;
 using System;
 
@@ -8,7 +10,7 @@ using Azure.Messaging.WebPubSub;
 using Azure.Messaging.WebPubSub.Clients;
 // using Microsoft.AspNetCore.Mvc.TagHelpers;
 // using Microsoft.Azure.WebPubSub.Common;
-using Mwm.ReSync.Clients;
+using Lib;
 
 class Program
 {
