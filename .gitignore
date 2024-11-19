@@ -7,6 +7,8 @@
 /Mwm.ReSync/.vs/Mwm.ReSync
 bin/
 obj/
+**/bin/
+**/obj/
 packages
 *.suo
 *.user

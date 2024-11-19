@@ -16,4 +16,8 @@
       <ProjectReference Include="..\Mwm.ReSync.Clients\Mwm.ReSync.Clients.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="obj\Debug\net8.0\" />
+    </ItemGroup>
+
 </Project>
