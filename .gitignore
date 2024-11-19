@@ -5,5 +5,8 @@
 /.idea
 /.vs
 /Mwm.ReSync/.vs/Mwm.ReSync
-/Mwm.ReSync/samples/clientpub/obj
-/Mwm.ReSync/samples/clientsub/obj
+bin
+obj
+packages
+*.suo
+*.user
