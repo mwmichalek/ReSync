@@ -1,16 +1,15 @@
-﻿using System;
-using System.Net.WebSockets;
-using System.Text.Json;
+﻿using Mwm.ReSync.Clients;
+
+namespace Mwm.ReSync.Client.Subscriber;
+using System;
+
 using System.Threading.Tasks;
 
 using Azure.Messaging.WebPubSub;
 using Azure.Messaging.WebPubSub.Clients;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
-using Microsoft.Azure.WebPubSub.Common;
+// using Microsoft.AspNetCore.Mvc.TagHelpers;
+// using Microsoft.Azure.WebPubSub.Common;
 using Mwm.ReSync.Clients;
-using Websocket.Client;
-
-namespace clientsub;
 
 class Program
 {

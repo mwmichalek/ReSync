@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.WebSockets;
-using System.Text.Json;
-using System.Threading.Tasks;
-
-using Azure.Messaging.WebPubSub;
+﻿using Azure.Messaging.WebPubSub;
 using Azure.Messaging.WebPubSub.Clients;
 using Mwm.ReSync.Clients;
-using Websocket.Client;
 
-namespace clientpub;
+namespace Mwm.ReSync.Client.Publisher;
 
 class Program
 {
@@ -45,11 +37,17 @@ class Program
             return Task.CompletedTask;
         };
         
+        Console.WriteLine("Publisher: [Type something here]");
+        
         var streaming = Console.ReadLine();
         while (streaming != null)
         {
-            await client.PublishAsync(new ExpiringMessage { Body = streaming , ExpirationTime = DateTime.Now.AddDays(7) , TimeStamp = DateTime.Now });
-            await client.PublishAsync(new TranslatedMessage { Body = streaming , TranslatedText = streaming.ToLower() , TimeStamp = DateTime.Now });
+            await client.PublishAsync(new ExpiringMessage { Body = streaming , 
+                                                            ExpirationTime = DateTime.Now.AddDays(7) , 
+                                                            TimeStamp = DateTime.Now });
+            await client.PublishAsync(new TranslatedMessage { Body = streaming , 
+                                                              TranslatedText = streaming.ToLower() , 
+                                                              TimeStamp = DateTime.Now });
             Console.WriteLine("Publisher: Published messages.");
             
             streaming = Console.ReadLine();
@@ -58,5 +56,3 @@ class Program
         Console.WriteLine("Done.");
     }
 }
-
-
