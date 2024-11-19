@@ -10,14 +10,11 @@
     <ItemGroup>
       <PackageReference Include="Azure.Messaging.WebPubSub" Version="1.4.0" />
       <PackageReference Include="Azure.Messaging.WebPubSub.Client" Version="1.0.0" />
+      <PackageReference Include="Websocket.Client" Version="5.1.2" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Mwm.ReSync.Clients\Mwm.ReSync.Clients.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="obj\Debug\net8.0\" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using Mwm.ReSync.Clients;
-
+﻿
 namespace Mwm.ReSync.Client.Subscriber;
 using System;
 
@@ -50,4 +49,3 @@ class Program
         Console.Read();
     }
 }
-
