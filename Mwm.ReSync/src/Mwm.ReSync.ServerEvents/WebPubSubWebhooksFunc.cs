@@ -20,7 +20,7 @@ public class WebPubSubWebhooksFunc
     }
     
     [Function("WebPubSubEventOccured")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest request)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", "post")] HttpRequest request)
     {
         // Read the WebHook-Request-Origin header
         var requestOrigin = request.Headers["WebHook-Request-Origin"];
