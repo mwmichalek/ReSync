@@ -1,26 +1,26 @@
 using System.Text.Json;
 using Azure.Messaging.WebPubSub.Clients;
-using Websocket.Client;
+using Mwm.ReSync.Client.Common;
 
 namespace Mwm.ReSync.Lib;
 
 public static class WebPubSubClientExtensions
 {
-    private static readonly IDictionary<string, IMessageSubscription> MessageSubscriptions = new Dictionary<string, IMessageSubscription>();
+    private static readonly IDictionary<string, IEventSubscription> ClientEventSubscriptions = new Dictionary<string, IEventSubscription>();
     
-    public static async Task SubscribeAsync<TMessage>(this WebPubSubClient client, Action<TMessage> onMessage) where TMessage : class
+    public static async Task SubscribeClientAsync<TEvent>(this WebPubSubClient client, Action<TEvent> onEvent) where TEvent : ClientEvent
     {
-        await client.JoinGroupAsync(typeof(TMessage).Name);
+        await client.JoinGroupAsync(typeof(TEvent).Name);
         
         // Only register the main function once
-        if (MessageSubscriptions.Count == 0)
+        if (ClientEventSubscriptions.Count == 0)
         {
-            client.GroupMessageReceived += (messageArgs) =>
+            client.GroupMessageReceived += (eventArgs) =>
             {
-                if (MessageSubscriptions.TryGetValue(messageArgs.Message.Group, out IMessageSubscription subscription))
+                if (ClientEventSubscriptions.TryGetValue(eventArgs.Message.Group, out IEventSubscription subscription))
                 {
-                    var messageJson = messageArgs.Message.Data.ToString();
-                    subscription.HandleNotification(messageJson);
+                    var messageJson = eventArgs.Message.Data.ToString();
+                    subscription.HandleEvent(messageJson);
                 }
 
                 return Task.CompletedTask;
@@ -28,31 +28,56 @@ public static class WebPubSubClientExtensions
             
         }
         
-        MessageSubscriptions[typeof(TMessage).Name] = new MessageSubscription<TMessage>(onMessage);
+        ClientEventSubscriptions[typeof(TEvent).Name] = new EventSubscription<TEvent>(onEvent);
     }
-
-    public static async Task PublishAsync<TMessage>(this WebPubSubClient client, TMessage message) where TMessage : class
+    
+    private static readonly IDictionary<string, IEventSubscription> ServerEventSubscriptions = new Dictionary<string, IEventSubscription>();
+    
+    public static async Task SubscribeServerAsync<TEvent>(this WebPubSubClient client, Action<TEvent> onEvent) where TEvent : ServerEvent
     {
-        await client.SendToGroupAsync(typeof(TMessage).Name, BinaryData.FromObjectAsJson(message), WebPubSubDataType.Json);
+
+        // Only register the main function once
+        if (ServerEventSubscriptions.Count == 0)
+        {
+            client.ServerMessageReceived += (eventArgs) =>
+            {
+                // TODO: How do we look up the server event type?
+                if (ServerEventSubscriptions.TryGetValue(eventArgs.GetType().Name, out IEventSubscription subscription))
+                {
+                    var messageJson = eventArgs.Message.Data.ToString();
+                    subscription.HandleEvent(messageJson);
+                }
+
+                return Task.CompletedTask;
+            };
+        }
+        
+        ServerEventSubscriptions[typeof(TEvent).Name] = new EventSubscription<TEvent>(onEvent);
+    }
+    
+    
+    public static async Task PublishAsync<TEvent>(this WebPubSubClient client, TEvent @event) where TEvent : ClientEvent
+    {
+        await client.SendToGroupAsync(typeof(TEvent).Name, BinaryData.FromObjectAsJson(@event), WebPubSubDataType.Json);
     }
 }
 
-public interface IMessageSubscription {
+public interface IEventSubscription {
 
-    Task HandleNotification(string notificationBody);
+    Task HandleEvent(string eventBody);
 
 }
 
-public class MessageSubscription<TMessage> : IMessageSubscription where TMessage : class {
+public class EventSubscription<TEvent> : IEventSubscription where TEvent : Event {
 
-    private Action<TMessage> _messageHandler;
+    private Action<TEvent> _eventHandler;
 
-    public MessageSubscription(Action<TMessage> messageHandler) => _messageHandler = messageHandler;
+    public EventSubscription(Action<TEvent> eventHandler) => _eventHandler = eventHandler;
 
-    public Task HandleNotification(string messageBody) {
-        var message = JsonSerializer.Deserialize<TMessage>(messageBody);
-        if (message != null)
-            _messageHandler(message);
+    public Task HandleEvent(string eventBody) {
+        var evt = JsonSerializer.Deserialize<TEvent>(eventBody);
+        if (evt != null)
+            _eventHandler(evt);
         return Task.CompletedTask;
     }
 }

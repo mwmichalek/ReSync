@@ -4,9 +4,11 @@ using Azure;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Mwm.ReSync.ServerEvents.Extensions;
+using Newtonsoft.Json;
 
 namespace Mwm.ReSync.ServerEvents;
 
@@ -24,18 +26,47 @@ public class WebPubSubWebhooksFunc
     {
         // Read the WebHook-Request-Origin header
         var requestOrigin = request.Headers["WebHook-Request-Origin"];
-        request.HttpContext.Response.Headers.Append("WebHook-Allowed-Origin", requestOrigin);
-        
-        if (!string.IsNullOrEmpty(requestOrigin))
+ 
+        if (request.Method == HttpMethods.Get && !string.IsNullOrEmpty(requestOrigin))
         {
-            _logger.LogInformation("Authorization Event");
-            return new OkObjectResult("I approve of this message");
+            request.HttpContext.Response.Headers.Append("WebHook-Allowed-Origin", requestOrigin);
+            _logger.LogInformation($"Authorization Event.");
+            return new OkResult();
         }
+        
+        var requestId = request.Headers["x-ms-client-request-id"];
+        var userId = request.Headers["ce-userId"];
+        var eventType = request.Headers["ce-eventName"];
+        
+        
 
-        var body = await request.GetRawBodyStringAsync();
-        _logger.LogInformation($"C# HTTP trigger function processed a request : {body}");
-        return new OkObjectResult($"Welcome to Azure Functions! : {body}");
+        return new OkResult();
     }
+    
+    
+    
+    // // Read and log the request details
+    // var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
+    // var headers = request.Headers;
+    // var queryString = request.QueryString.ToString();
+    //
+    // // Build a diagnostic string
+    // var diagnostics = new StringBuilder();
+    // diagnostics.AppendLine("Request Body:");
+    // diagnostics.AppendLine(requestBody);
+    // diagnostics.AppendLine("Headers:");
+    // foreach (var header in headers)
+    // {
+    //     diagnostics.AppendLine($"{header.Key}: {header.Value}");
+    // }
+    // diagnostics.AppendLine("Query String:");
+    // diagnostics.AppendLine(queryString);
+    //
+    // // Log the diagnostic information
+    // _logger.LogInformation(diagnostics.ToString());
+    //     
+        
+        
     
     // [FunctionName("WebPubSubEventOccured")]
     // public async Task<IActionResult> Run(

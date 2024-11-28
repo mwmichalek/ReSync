@@ -11,4 +11,8 @@
       <PackageReference Include="Websocket.Client" Version="4.3.30" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Mwm.ReSync.Client.Common\Mwm.ReSync.Client.Common.csproj" />
+    </ItemGroup>
+
 </Project>

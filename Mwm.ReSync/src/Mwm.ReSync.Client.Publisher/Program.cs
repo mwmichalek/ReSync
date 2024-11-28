@@ -32,24 +32,17 @@ class Program
         await client.StartAsync(); 
         Console.WriteLine("Publisher: Connected.");
         
-        client.ServerMessageReceived += eventArgs =>
-        { 
-            Console.WriteLine($"Publisher: ServerMessageReceived - {eventArgs.Message}");
-            return Task.CompletedTask;
-        };
-        
-        Console.WriteLine("Publisher: [Type something here]");
+        await client.SubscribeServerAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
+        await client.SubscribeServerAsync((UserDisconnectedEvent evt) => Console.WriteLine($"ServerEvent: Disconnected: {evt.UserName}"));
+
+        Console.WriteLine("Publisher: [Type something here....]");
         
         var streaming = Console.ReadLine();
         while (streaming != null)
         {
-            await client.PublishAsync(new ExpiringMessage { Body = streaming , 
-                                                            ExpirationTime = DateTime.Now.AddDays(7) , 
-                                                            TimeStamp = DateTime.Now });
-            await client.PublishAsync(new TranslatedMessage { Body = streaming , 
-                                                              TranslatedText = streaming.ToLower() , 
-                                                              TimeStamp = DateTime.Now });
-            Console.WriteLine("Publisher: Published messages.");
+            await client.PublishAsync(new TextMessageEvent { Text = streaming });
+            
+            Console.WriteLine("Publisher: Published event.");
             
             streaming = Console.ReadLine();
         }

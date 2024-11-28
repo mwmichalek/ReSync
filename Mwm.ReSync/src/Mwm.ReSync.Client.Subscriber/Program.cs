@@ -31,6 +31,7 @@ class Program
             userId: "subscriber", 
             roles: new string[]
             {
+                
                 "webpubsub.joinLeaveGroup", 
                 "webpubsub.sendToGroup"
             });
@@ -39,9 +40,9 @@ class Program
         await client.StartAsync();
         Console.WriteLine("Subscriber: Connected.");
         
-        await client.SubscribeAsync((ExpiringMessage msg) => Console.WriteLine($"ExpiringMessage: {msg.Body} {msg.ExpirationTime} {msg.TimeStamp}"));
-        await client.SubscribeAsync((TranslatedMessage msg) => Console.WriteLine($"TranslatedMessage: {msg.Body} {msg.TranslatedText}  {msg.TimeStamp}"));
-
+        await client.SubscribeClientAsync((TextMessageEvent evt) => Console.WriteLine($"TextMessage: {evt.Text} {evt.TimeStamp} {evt.Source}"));
+        await client.SubscribeServerAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
+        
         client.ServerMessageReceived += eventArgs =>
         { 
             Console.WriteLine($"Subscriber: ServerMessageReceived - {eventArgs.Message}");
@@ -51,3 +52,48 @@ class Program
         Console.Read();
     }
 }
+
+public class RootObject
+{
+    public Claims claims { get; set; }
+    public Query query { get; set; }
+    public Headers headers { get; set; }
+    public string[] subprotocols { get; set; }
+    public object[] clientCertificates { get; set; }
+}
+
+public class Claims
+{
+    public string[] http___schemas_xmlsoap_org_ws_2005_05_identity_claims_nameidentifier { get; set; }
+    public string[] http___schemas_microsoft_com_ws_2008_06_identity_claims_role { get; set; }
+    public string[] nbf { get; set; }
+    public string[] exp { get; set; }
+    public string[] iat { get; set; }
+    public string[] aud { get; set; }
+    public string[] sub { get; set; }
+    public string[] role { get; set; }
+}
+
+public class Query
+{
+    public string[] access_token { get; set; }
+}
+
+public class Headers
+{
+    public string[] Connection { get; set; }
+    public string[] Host { get; set; }
+    public string[] Upgrade { get; set; }
+    public string[] X_Forwarded_Proto { get; set; }
+    public string[] X_Forwarded_Host { get; set; }
+    public string[] X_Request_ID { get; set; }
+    public string[] X_Real_IP { get; set; }
+    public string[] X_Forwarded_For { get; set; }
+    public string[] X_Forwarded_Port { get; set; }
+    public string[] X_Original_URI { get; set; }
+    public string[] X_Scheme { get; set; }
+    public string[] Sec_WebSocket_Key { get; set; }
+    public string[] Sec_WebSocket_Version { get; set; }
+    public string[] Sec_WebSocket_Protocol { get; set; }
+}
+
