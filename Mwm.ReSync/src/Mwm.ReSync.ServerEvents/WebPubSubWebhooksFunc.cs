@@ -1,12 +1,15 @@
 using System.Text;
 using System.Text.Json;
 using Azure;
+using Azure.Messaging.WebPubSub;
+using Azure.Messaging.WebPubSub.Clients;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
 using Mwm.ReSync.ServerEvents.Extensions;
 using Newtonsoft.Json;
 
@@ -15,10 +18,13 @@ namespace Mwm.ReSync.ServerEvents;
 public class WebPubSubWebhooksFunc
 {
     private readonly ILogger<WebPubSubWebhooksFunc> _logger;
-
-    public WebPubSubWebhooksFunc(ILogger<WebPubSubWebhooksFunc> logger)
+    private readonly string _connectionString;
+    private readonly string _hubName;
+    public WebPubSubWebhooksFunc(ILogger<WebPubSubWebhooksFunc> logger, IConfiguration configuration)
     {
         _logger = logger;
+        _connectionString = configuration["AzureWebJobsConfiguration:ConnectionString"];
+        _hubName = configuration["AzureWebJobsConfiguration:HubName"];
     }
     
     [Function("WebPubSubEventOccured")]
@@ -38,7 +44,24 @@ public class WebPubSubWebhooksFunc
         var userId = request.Headers["ce-userId"];
         var eventType = request.Headers["ce-eventName"];
         
+        var serviceClient = new WebPubSubServiceClient(_connectionString, _hubName);
         
+        var uri = serviceClient.GetClientAccessUri(
+            userId: "server", 
+            roles: new string[]
+            {
+                "webpubsub.joinLeaveGroup", 
+                "webpubsub.sendToGroup"
+            });
+        
+        var client = new WebPubSubClient(uri); 
+        await client.StartAsync(); 
+        _logger.LogInformation($"Connected to Web PubSub.");
+        
+        
+        //await client.PublishAsync(new TextMessageEvent { Text = streaming });
+        
+        //TODO: Create eventType and publish
 
         return new OkResult();
     }

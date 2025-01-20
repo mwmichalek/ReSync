@@ -30,3 +30,8 @@ public class UserDisconnectedEvent : ServerEvent
 {
     public string? UserName { get; set; }
 }
+
+public class UserReconnectEvent : ServerEvent
+{
+    public string? UserName { get; set; }
+}
