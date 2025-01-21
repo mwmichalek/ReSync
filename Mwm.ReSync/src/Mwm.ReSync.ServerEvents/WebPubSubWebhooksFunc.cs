@@ -44,6 +44,12 @@ public class WebPubSubWebhooksFunc
         var userId = request.Headers["ce-userId"];
         var eventType = request.Headers["ce-eventName"];
         
+        // Ignore all server activity!
+        if (userId == "server") return new OkResult();
+        
+        // WebPubSubEventOccured. requestId: 8b3cb4df-a7f4-4c1d-ad69-d9f43774847e, userId: subscriber, eventType: connect
+        _logger.LogInformation($"WebPubSubEventOccured. requestId: {requestId}, userId: {userId}, eventType: {eventType}");
+        
         var serviceClient = new WebPubSubServiceClient(_connectionString, _hubName);
         
         var uri = serviceClient.GetClientAccessUri(
@@ -56,17 +62,21 @@ public class WebPubSubWebhooksFunc
         
         var client = new WebPubSubClient(uri); 
         await client.StartAsync(); 
-        _logger.LogInformation($"Connected to Web PubSub.");
+        _logger.LogInformation($"Connected to Web PubSub: {_hubName}");
         
-        
+        await client.StopAsync();
+
         //await client.PublishAsync(new TextMessageEvent { Text = streaming });
         
         //TODO: Create eventType and publish
 
         return new OkResult();
     }
-    
-    
+
+    // private string CreateJsonEvent(string eventType, string userId, string requestId)
+    // {
+    //     
+    // }
     
     // // Read and log the request details
     // var requestBody = await new StreamReader(request.Body).ReadToEndAsync();
