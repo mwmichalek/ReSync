@@ -12,6 +12,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Configuration;
 using Mwm.ReSync.ServerEvents.Extensions;
 using Newtonsoft.Json;
+using Mwm.ReSync.Client.Common;
+using Mwm.ReSync.Lib;
 
 namespace Mwm.ReSync.ServerEvents;
 
@@ -23,8 +25,8 @@ public class WebPubSubWebhooksFunc
     public WebPubSubWebhooksFunc(ILogger<WebPubSubWebhooksFunc> logger, IConfiguration configuration)
     {
         _logger = logger;
-        _connectionString = configuration["AzureWebJobsConfiguration:ConnectionString"];
-        _hubName = configuration["AzureWebJobsConfiguration:HubName"];
+        _connectionString = configuration["AzureWebJobsConfiguration:ConnectionString"]!;
+        _hubName = configuration["AzureWebJobsConfiguration:HubName"]!;
     }
     
     [Function("WebPubSubEventOccured")]
@@ -40,7 +42,10 @@ public class WebPubSubWebhooksFunc
             return new OkResult();
         }
         
-        var requestId = request.Headers["x-ms-client-request-id"];
+        var requestIdStr = request.Headers["x-ms-client-request-id"];
+        Guid.TryParse(requestIdStr.ToString(), out Guid requestId);
+        
+            
         var userId = request.Headers["ce-userId"];
         var eventType = request.Headers["ce-eventName"];
         
@@ -48,7 +53,7 @@ public class WebPubSubWebhooksFunc
         if (userId == "server") return new OkResult();
         
         // WebPubSubEventOccured. requestId: 8b3cb4df-a7f4-4c1d-ad69-d9f43774847e, userId: subscriber, eventType: connect
-        _logger.LogInformation($"WebPubSubEventOccured. requestId: {requestId}, userId: {userId}, eventType: {eventType}");
+        _logger.LogInformation($"WebPubSubEventOccured. requestId: {requestIdStr}, userId: {userId}, eventType: {eventType}");
         
         var serviceClient = new WebPubSubServiceClient(_connectionString, _hubName);
         
@@ -63,12 +68,39 @@ public class WebPubSubWebhooksFunc
         var client = new WebPubSubClient(uri); 
         await client.StartAsync(); 
         _logger.LogInformation($"Connected to Web PubSub: {_hubName}");
-        
-        await client.StopAsync();
 
-        //await client.PublishAsync(new TextMessageEvent { Text = streaming });
-        
-        //TODO: Create eventType and publish
+        if (eventType == "connect")
+        {
+            _logger.LogInformation($"Publishing Connection Event: {userId}");
+            await client.PublishAsync(new UserConnectedEvent
+            {
+                Source = "server",
+                UserName = userId,
+                RequestId = requestId
+            });
+        }
+        else if (eventType == "disconnect")
+        {
+            _logger.LogInformation($"Publishing Disconnection Event: {userId}");
+            await client.PublishAsync(new UserDisconnectedEvent
+            {
+                Source = "server",
+                UserName = userId,
+                RequestId = requestId
+            });
+        }
+        else if (eventType == "reconnect")
+        {
+            _logger.LogInformation($"Publishing Reconnection Event: {userId}");
+            await client.PublishAsync(new UserReconnectEvent
+            {
+                Source = "server",
+                UserName = userId,
+                RequestId = requestId
+            });
+        }
+
+        await client.StopAsync();
 
         return new OkResult();
     }

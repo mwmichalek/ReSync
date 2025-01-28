@@ -16,22 +16,21 @@ public class TextMessageEvent : ClientEvent
     public required string Text { get; set; }
 }
 
-public abstract class ServerEvent : Event
+public abstract class ConnectionEvent : Event
 {
     public Guid RequestId { get; set; }
-}
-
-public class UserConnectedEvent : ServerEvent
-{
+    
     public string? UserName { get; set; }
 }
 
-public class UserDisconnectedEvent : ServerEvent
+public class UserConnectedEvent : ConnectionEvent
 {
-    public string? UserName { get; set; }
 }
 
-public class UserReconnectEvent : ServerEvent
+public class UserReconnectEvent : ConnectionEvent
 {
-    public string? UserName { get; set; }
+}
+
+public class UserDisconnectedEvent : ConnectionEvent
+{
 }

@@ -32,8 +32,8 @@ class Program
         await client.StartAsync(); 
         Console.WriteLine("Publisher: Connected.");
         
-        await client.SubscribeServerAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
-        await client.SubscribeServerAsync((UserDisconnectedEvent evt) => Console.WriteLine($"ServerEvent: Disconnected: {evt.UserName}"));
+        await client.SubscribeAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
+        await client.SubscribeAsync((UserDisconnectedEvent evt) => Console.WriteLine($"ServerEvent: Disconnected: {evt.UserName}"));
 
         Console.WriteLine("Publisher: [Type something here....]");
         

@@ -40,9 +40,9 @@ class Program
         await client.StartAsync();
         Console.WriteLine("Subscriber: Connected.");
         
-        await client.SubscribeClientAsync((TextMessageEvent evt) => Console.WriteLine($"TextMessage: {evt.Text} {evt.TimeStamp} {evt.Source}"));
-        await client.SubscribeServerAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
-        
+        await client.SubscribeAsync((TextMessageEvent evt) => Console.WriteLine($"TextMessage: {evt.Text} {evt.TimeStamp} {evt.Source}"));
+        await client.SubscribeAsync((UserConnectedEvent evt) => Console.WriteLine($"ServerEvent: Connected: {evt.UserName}"));
+        await client.SubscribeAsync((UserDisconnectedEvent evt) => Console.WriteLine($"ServerEvent: Disconnected: {evt.UserName}"));
         client.ServerMessageReceived += eventArgs =>
         { 
             Console.WriteLine($"Subscriber: ServerMessageReceived - {eventArgs.Message}");
